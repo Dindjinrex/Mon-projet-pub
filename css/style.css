@@ -1,0 +1,15 @@
+.navbar{
+    border-radius: 0;
+}
+.navbar-inverse{
+    background: #2162ff;
+    border-color: #1534ff;
+}
+.navbar-inverse .navbar-nav > li > a {
+    color: #ffffff;
+}
+.navbar-header a, .navbar-inverse .navbar-brand
+  {
+    color: #ffffff;
+}
+

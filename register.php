@@ -10,12 +10,26 @@
         if(empty($pseudo) || !preg_match('#^[a-zA-Z0-9_]+$#',  $pseudo)){
 
             $errors['pseudo']= "Votre pseudo n'est pas valide ou comporte des caractères speciaux";
+        }else{
+        $req=$bdd->prepare('SELECT id FROM users WHERE pseudo=?'); //existeance du pseudo
+        $req->execute($pseudo);
+        $user=$req->fetch();
+            if($user){
+                $errors['pseudoexist']= "Votre pseudo existe déja";
+            }
         }
 
         //verification de l'email
         if(empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)){
 
             $errors['email']= "Veuillez entrer une adresse email valide";
+        }else{
+            $req=$bdd->prepare('SELECT id FROM users WHERE email=?');//existeance de l'email
+            $req->execute($email);
+            $user=$req->fetch();
+            if($user){
+                $errors['emailexist']= "Votre adresse email existe déja";
+            }
         }
 
         //verification de mot de passe
@@ -44,6 +58,8 @@ debug($errors);
 
 
 <h1> S'inscrire</h1>
+
+<?php  ; ?>
 
     <form action="" method="post">
         <div class="form-group">

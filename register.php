@@ -5,26 +5,35 @@
     if (!empty($_POST)){
         //tableau contenant les erreurs
         $errors=[];
-
+        extract($_POST);
         //verification du pseudo
-        if(empty($_POST['pseudo']) || !preg_match('#^[a-zA-Z0-9_]+$#',  $_POST['pseudo'])){
+        if(empty($pseudo) || !preg_match('#^[a-zA-Z0-9_]+$#',  $pseudo)){
 
             $errors['pseudo']= "Votre pseudo n'est pas valide ou comporte des caractères speciaux";
         }
 
         //verification de l'email
-        if(empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)){
+        if(empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)){
 
             $errors['email']= "Veuillez entrer une adresse email valide";
         }
 
         //verification de mot de passe
-        if(empty($_POST['pass']) || $_POST['pass'] != $_POST['pass_confirm']){
+        if(empty($pass) || $pass != $_POST['pass_confirm']){
 
             $errors['password']="Votre mot de passe est vide ou ne correspondent pas";
         }
 
-        require_once 'inc/database.php';
+        // s'il n'y a pas d'erreur on charge la base donnée et on continue
+          if (empty($errors)){
+              require_once 'inc/database.php';
+            $req=$bdd->prepare("INSERT INTO users(pseudo, email, pass_word) VALUES (?, ?, ?)");
+            $password=password_hash($pass, PASSWORD_BCRYPT);
+            $req->execute(array($_POST['pseudo'], $_POST['email'], $password));
+            die('inscription reussire');
+          }
+
+
 debug($errors);
 
 

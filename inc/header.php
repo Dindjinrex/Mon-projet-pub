@@ -11,7 +11,7 @@
     <title>Projet2</title>
 </head>
 <body>
-<?php include 'fonction.php' ; ?>
+<?php //include 'fonction.php' ; ?>
 
 <nav class="navbar navbar-inverse ">
     <div class="container">

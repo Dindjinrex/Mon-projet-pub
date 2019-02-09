@@ -1,5 +1,6 @@
 
 <?php require_once 'inc/fonction.php' ; ?>
+
 <?php
     if (!empty($_POST)){
         //tableau contenant les erreurs
@@ -44,27 +45,23 @@
               require 'inc/database.php';
                 //insertion de l'utilisi
               $token=str_random(60);
-              $password=password_hash($pass, PASSWORD_BCRYPT);
-            $req=$bdd->prepare("INSERT INTO users(pseudo, email, pass_word) VALUES (?, ?, ?, ?)");
-            $req->execute(array($pseudo, $email, $password, $token));
-              $user_id=$bdd->lastInsertId();
+              $password=password_hash($_POST['pass'], PASSWORD_BCRYPT);
+            $req=$bdd->prepare("INSERT INTO users(pseudo, email, pass_word, confirm_token) VALUES (?, ?, ?, ?)");
+            $req->execute(array($_POST['pseudo'] , $_POST['email'] , $password, $token));
+            $user_id=$bdd->lastInsertId();
             mail(($_POST['email']), 'confirmation de compte', "cliquer ici poour confirmer votre
             compte\n\nhttp://localhost/php/projet2/confirm.php?id=$user_id&token=$token" );
 
-            header('location: login.php');
+            header('location:http://localhost/php/projet2/confirm.php?id='.$user_id.'&token='.$token );
+
           }
-
-
     }
-
-
 ?>
 
 
 <?php require 'inc/header.php' ; ?>
 
 <h1> S'inscrire</h1>
-
 
     <?php  if (!empty($errors)): ?>
         <div class="alert alert-danger">
@@ -81,12 +78,12 @@
     <form action="" method="post">
         <div class="form-group">
             <label for="pseudo"> Pseudo</label>
-            <input type="text"  id="pseudo" name="pseudo" class="form-control">
+            <input type="text"  id="pseudo" name="pseudo" class="form-control" value="<?php  if( isset($_POST['pseudo']) && empty($errors['pseudo']) && empty($errors['pseudoexist'])){ echo $_POST['pseudo'];} ?>" >
         </div>
 
         <div class="form-group">
             <label for="email"> Email</label>
-            <input type="text"  name="email" id="email" class="form-control">
+            <input type="text"  name="email" id="email" class="form-control" value="<?php  if( isset($_POST['email']) && empty($errors['email']) && empty($errors['emailexist'])){ echo $_POST['email'];} ?>" >
         </div>
 
         <div class="form-group">

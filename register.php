@@ -1,5 +1,6 @@
 
 <?php require_once 'inc/fonction.php' ; ?>
+<?php session_start() ; ?>
 
 <?php
     if (!empty($_POST)){

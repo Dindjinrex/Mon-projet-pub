@@ -6,14 +6,15 @@ $token=$_GET['token'];
 $req=$bdd->prepare('SELECT * FROM users WHERE id=?');
 $req->execute(array($user_id));
 $user=$req->fetch();
+session_start();
  //voyons l'id existe et que le token obtenir en get correspond a celui de la db'
 if ($user && $user->confirm_token == $token){
-    session_start();
     //annulé le token
-    $req=$bdd->prepare('UPDATE users SET confirm_token= NULL, dat_confirm=NOW() WHERE id=?');
+    $req=$bdd->prepare('UPDATE users SET confirm_token= NULL , dat_confirm=NOW() WHERE id=?');
     $req->execute($user->id);
     $_SESSION['auth']=$user;
+    $_SESSION['flash']['success']= "Compte a bien été créé";
     header('Location: profil.php');
 }else{
-    die('pas ok');
+    header('Location: login.php');
 }

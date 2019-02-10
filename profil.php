@@ -1,5 +1,7 @@
 <?php session_start();
-require_once 'inc/fonction.php '; ?>
+require_once 'inc/fonction.php ';
+deconnect();
+?>
 
 <?php require 'inc/header.php '; ?>
 

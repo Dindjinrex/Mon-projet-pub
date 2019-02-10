@@ -13,7 +13,7 @@ if ($user && $user->confirm_token == $token){
     $req=$bdd->prepare('UPDATE users SET confirm_token= NULL , dat_confirm=NOW() WHERE id=?');
     $req->execute($user->id);
     $_SESSION['auth']=$user;
-    $_SESSION['flash']['success']= "Compte a bien été créé";
+    $_SESSION['flash']['success']= "Compte a bien été créé et vous êtes maintenant connecté(e)";
     header('Location: profil.php');
 }else{
     header('Location: login.php');

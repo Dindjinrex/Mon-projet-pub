@@ -8,3 +8,15 @@
         $alphabet="azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN1234567890" ;
         return  substr( str_shuffle(str_repeat($alphabet, $length)), 0, $length) ;
     }
+    function deconnect()
+    {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+        if(!isset($_SESSION['auth'])){
+            header('Location:login.php');
+            $_SESSION['flash']['danger']="Vous ne pouvez pas acceder tant que vous vous n'etes pas connecté";
+            exit();
+        }
+
+    }

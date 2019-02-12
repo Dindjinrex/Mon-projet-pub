@@ -13,7 +13,7 @@
         if(empty($pseudo) || !preg_match('#^[a-zA-Z0-9_]+$#',  $pseudo)){
             $errors['pseudo']= "Votre pseudo n'est pas valide ou comporte des caractères speciaux";
         }else{
-            $req=$bdd->prepare('SELECT id FROM users WHERE pseudo=?'); //existeance du pseudo
+             $req=$bdd->prepare('SELECT id FROM users WHERE pseudo=?'); //existeance du pseudo
             $req->execute(array( $pseudo));
             $user=$req->fetch();
             if($user){
@@ -57,6 +57,7 @@
 
           }
     }
+
 ?>
 
 

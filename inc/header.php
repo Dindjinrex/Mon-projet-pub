@@ -34,7 +34,7 @@
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <?php  if (isset($_SESSION['auth'])): ?>
-                    <li><a href="../deconect.php">Se déconnecter</a></li>
+                    <li><a href="deconect.php">Se déconnecter</a></li>
                 <?php  else: ?>
                 <li ><a href="register.php">S'inscrire</a></li>
                 <li><a href="login.php">Se connecter</a></li>

@@ -1,9 +1,8 @@
 <?php session_start();
 require_once 'inc/fonction.php ';
-deconnect();
+deconnect(); //tant que session n'est pas definir redirection vers login
+require 'inc/header.php'
 ?>
-
-<?php require 'inc/header.php '; ?>
 
 
 <h1> Le compte de <?=  $_SESSION['auth']->pseudo ?></h1>

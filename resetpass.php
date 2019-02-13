@@ -3,9 +3,10 @@
 
 <form action="" method="post">
     <div class="form-group">
-        <label for="email"> Email</label>
-        <input type="text"  name="email" id="email" class="form-control" value="<?php  if( isset($_POST['email']) && empty($errors['email']) && empty($errors['emailexist'])){ echo $_POST['email'];} ?>" >
+        <label for="email">Entrez l'email de votre compte</label>
+        <input type="text"  name="email" id="email" class="form-control"  >
     </div>
+    <button type="submit" class="btn btn-primary"> Soumettre</button>
 </form>
 <?php include 'inc/footer.php' ; ?>
 

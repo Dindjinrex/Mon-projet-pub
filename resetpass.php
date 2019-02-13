@@ -10,10 +10,11 @@ if (!empty($_POST)){
         $errors['invalidMail']="Veuillez entrer un email valide";
     }else{
         require_once 'inc/database.php';
-        $req=$bdd->prepare('SELECT *FROM users WHERE email=?');//existeance de l'email
+        $req=$bdd->prepare('SELECT email FROM users WHERE email=?');//existeance de l'email
         $req->execute(array( $_POST['email']));
-        $users=$req->fetch();
-        if($users){
+        $users_email=$req->fetch();
+        if($users_email){
+            $_SESSION['emailReset']=$users_email;
             $_SESSION['flash']['info']="Un email de confirmation vous a été envoyé";
             header('Location:resetpassconfirm.php');
             exit();

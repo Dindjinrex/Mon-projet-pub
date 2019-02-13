@@ -1,6 +1,6 @@
 <?php session_start();
 require_once 'inc/fonction.php ';
-deconnect(); //tant que session n'est pas definir redirection vers login
+//deconnect(); //tant que session n'est pas definir redirection vers login
 require 'inc/header.php'
 ?>
 

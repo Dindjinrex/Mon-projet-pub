@@ -35,6 +35,12 @@
         <input type="password" name="pass" id="pass" class="form-control">
     </div>
 
+    <div class="form-group">
+        <label >
+        <input type="checkbox" name="remenber"   value="1"> Se Souvenir de moi
+        </label>
+    </div>
+
     <button type="submit" class="btn btn-primary"> Me connecter</button>
     <a href="resetpass.php">Vous avez oublié votre mot de passe ?</a>
 </form>

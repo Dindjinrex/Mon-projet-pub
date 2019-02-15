@@ -1,3 +1,6 @@
+body{
+
+}
 .navbar{
     border-radius: 0;
 }
@@ -13,3 +16,7 @@
     color: #ffffff;
 }
 
+.thumbnail > img{
+    height: 200px;
+    width: 100%;
+}

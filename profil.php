@@ -6,56 +6,77 @@ require 'inc/database.php';
 ?>
 
 <?php
-    $errors=[];
-    if(!empty($_POST)){
+        $errors=[];
 
+    if(!empty($_POST)) {
         // si on clic sur publier publier
-        if (empty($_POST['title_pub'])){
-            $errors['noTitle']="Veuillez donner un titre à votre publication";
+        if (empty($_POST['title_pub'])) {
+            $errors['noTitle'] = "Veuillez donner un titre à votre publication";
         }
 //        Si la publication est vide
-        if (empty($_POST['article_pub'])){
-            $errors['noArticle']="Veuillez envoyer votre publication";
+        if (empty($_POST['article_pub'])) {
+            $errors['noArticle'] = "Veuillez envoyer votre publication";
         }
-
 //        Sans Envoyer une image
-        if (empty($_FILES)){
-            $errors['file_empty']="Veuillez Choisr une image";
-        }else{
-            $file_name=$_FILES['img_pub']['name'];
-            // On recupere la dernier partie de la chaine du nom du fichier
+        $file_name = $_FILES['img_pub']['name'];
 
-            $file_extension =strrchr($file_name, ". ");
-            $extensions_autorises =array('.jpg', '.JPG', '.jpeg', '.JPEG', '.png', '.PNG');
+//     On recupere  avec "strrchr" la dernier partie de la chaine du nom du fichier comment par le '.'
+//     Nous allons convertir avec "strtolower()" l'extension en miniscule
 
+        $file_extension = strtolower(strrchr($file_name, ". "));
+        $extensions_autorises = array('.jpg', '.jpeg', '.png', 'gif');
+
+        $auteur_pseudo = $_SESSION['auth']->pseudo;
+
+//      $id_order_pub sera un identifiant qui va permettre classer les image
+        $image_id = time();
+        $name_img = $image_id. '_' . $auteur_pseudo . $file_extension;
+
+        if (empty($_FILES) || empty($_FILES['img_pub']['name'])) {
+            $errors['file_empty'] = "Veuillez Choisr une image: le choix de l'image est Obligatoire";
+        } else {
 //            Est-ce que l'extention du fichier est parmi ceux autorisé
-            if (!in_array($file_extension, $extensions_autorises )){
-                $errors['no_extens']="Ce type de fichier n'est pas autorisé";
-            }$file_size=$_FILES['img_pub']['size'];
-            $max_size=3000000;
+            if (!in_array($file_extension, $extensions_autorises)) {
+                $errors['no_extens'] = "Ce type de fichier n'est pas autorisé";
+            }
 
-            $file_tmp_name=$_FILES['img_pub']['tmp_name'];
-            $file_dest='file_img_pub/'.$file_name;
+//          Verification de la taille du fichier
+            $file_size = $_FILES['img_pub']['size'];
+            $max_size = 3000000;
+            if ($file_size > $max_size) {
+                $errors['file_size'] = "Votre fichier est trop lourd";
+            }
 
-            if ($file_size>$max_size){
-                $errors['file_size']="Votre fichier est trop lourd";
+//          la destination du fichier, le nom du fcihier sera de la forme timstamp_frejus.jpg
 
-            }elseif( move_uploaded_file($file_tmp_name, $file_dest)){
-                die('Fiuchier envoyer avec succes');
-            }else{
-
-                $errors['upload']="Votre fichier n'as pas pu etre chargé";
+//            Destination du fichier
+            $file_dest = 'file_img_pub/' . $name_img;
+            if (empty($errors)) {
+                $upload = move_uploaded_file($_FILES['img_pub']['tmp_name'], $file_dest);
+            } else {
+                $errors['upload'] = "Votre fichier n'as pas pu etre chargé";
             }
         }
+//        S'il $errors est vide alors o=insert dans la base de donnéé
+        if (empty($errors)) {
+            $req = $bdd->prepare('INSERT INTO article(auteur_pub, titre_pub, publication, image, dat_pub) VALUES(?, ?, ?, ?, NOW())');
+            $req->execute(array($_SESSION['auth']->pseudo, $_POST['title_pub'], $_POST['article_pub'], $image_id));
+            $success=" Votre publication a bien été";
+        }
+
+
+
     }
 
-var_dump($_FILES);
+
+
 
 ?>
 
+
 <h1>Bienvenue Mr  <?=  $_SESSION['auth']->pseudo ?>  </h1>
 <p>
-    Vous êtes maintenant connecté sur compte. Vous avoir accñs a nos publications et faire aussi de publications.
+    Vous êtes maintenant connecté sur compte. Vous avoir accès a nos publications et vous pouvez faire aussi de publications.
 </p>
     <br><br>
 <div class="container">
@@ -93,7 +114,7 @@ var_dump($_FILES);
 
     </div>
     <div class="row">
-        <?php $pubs=$bdd->query('SELECT *FROM  article') ?>
+        <?php $pubs=$bdd->query('SELECT *FROM  article ORDER BY dat_pub ') ?>
         <?php foreach ($pubs as $pub):  ?>
             <div class=" pub col-sm-6 col-md-3">
                 <div class="thumbnail">

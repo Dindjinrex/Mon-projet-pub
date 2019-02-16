@@ -6,11 +6,11 @@
         $req=$bdd->prepare('SELECT * FROM users WHERE pseudo=?');
         $req->execute(array($_POST['pseudo']));
         $users=$req->fetch();
+        session_start();
         if (password_verify($_POST['pass'], $users->pass_word)){
-            session_start();
+//         Si le pseduo et le mot de passe exitent et corresponde, on les stock dans session auth puis dirige l'utilisateur vers son profil'
             $_SESSION['auth']=$users;
             $_SESSION['flash']['success']="Connection réussir";
-            debug($_SESSION);
             header('Location:profil.php');
             exit();
         }else{

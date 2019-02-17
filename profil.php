@@ -7,6 +7,7 @@ require 'inc/database.php';
 
 <?php
         $errors=[];
+        $auteur_pseudo = $_SESSION['auth']->pseudo;
 
     if(!empty($_POST)) {
         // si on clic sur publier publier
@@ -26,11 +27,11 @@ require 'inc/database.php';
         $file_extension = strtolower(strrchr($file_name, ". "));
         $extensions_autorises = array('.jpg', '.jpeg', '.png', 'gif');
 
-        $auteur_pseudo = $_SESSION['auth']->pseudo;
-
 //      $id_order_pub sera un identifiant qui va permettre classer les image
-        $image_id = time();
-        $name_img = $image_id. '_' . $auteur_pseudo . $file_extension;
+        $identifiant = time();
+        $image_id=$identifiant. '_' . $auteur_pseudo;
+
+        $name_img = $image_id. $file_extension;
 
         if (empty($_FILES) || empty($_FILES['img_pub']['name'])) {
             $errors['file_empty'] = "Veuillez Choisr une image: le choix de l'image est Obligatoire";
@@ -59,18 +60,12 @@ require 'inc/database.php';
         }
 //        S'il $errors est vide alors o=insert dans la base de donnéé
         if (empty($errors)) {
-            $req = $bdd->prepare('INSERT INTO article(auteur_pub, titre_pub, publication, image, dat_pub) VALUES(?, ?, ?, ?, NOW())');
-            $req->execute(array($_SESSION['auth']->pseudo, $_POST['title_pub'], $_POST['article_pub'], $image_id));
-            $success=" Votre publication a bien été";
+            $req = $bdd->prepare('INSERT INTO article(auteur_pub, title_pub, publication, name_img, dat_pub) VALUES(?, ?, ?, ?, NOW())');
+            $req->execute(array($_SESSION['auth']->pseudo, $_POST['title_pub'], $_POST['article_pub'], $name_img));
+        }else{
+            $errors['fail_upload']="Echec: Mr $auteur_pseudo votre publication n'a pu etre chargé ";
         }
-
-
-
     }
-
-
-
-
 ?>
 
 
@@ -89,6 +84,13 @@ require 'inc/database.php';
                         <li><?= $error ; ?></li>
                     </ul>
                 <?php endforeach ; ?>
+            </div>
+        <?php  endif; ?>
+
+<!--Affichage du message de succes-->
+        <?php  if (!empty($_POST) && empty($errors)): ?>
+            <div class="alert alert-success">
+                <p> Waooo!!! Mr <?=  $auteur_pseudo; ?> Votre publication bien été postée </p>
             </div>
         <?php  endif; ?>
 
@@ -114,19 +116,22 @@ require 'inc/database.php';
 
     </div>
     <div class="row">
-        <?php $pubs=$bdd->query('SELECT *FROM  article ORDER BY dat_pub ') ?>
-        <?php foreach ($pubs as $pub):  ?>
+        <?php $req=$bdd->query('SELECT *FROM  article ORDER BY name_img ');
+
+        ?>
+
+        <?php while ($pubs=$req->fetch()):  ?>
             <div class=" pub col-sm-6 col-md-3">
                 <div class="thumbnail">
-                    <img src="img/enfant.jpg" alt="...">
+                    <img src="file_img_pub/<?= $pubs->name_img ;  ?>" alt="...">
                     <div class="caption">
-                        <h3>Thumbnail label</h3>
-                        <p>...</p>
+                        <h3><?= $pubs->title_pub  ?></h3>
+                        <p>C'est une publication de <?= $pubs->title_pub  ?> </p>
                         <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
                     </div>
                 </div>
             </div>
-        <?php endforeach;  ?>
+        <?php endwhile;  ?>
     </div>
 
 

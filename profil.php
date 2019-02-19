@@ -110,31 +110,40 @@ require 'inc/database.php';
                 <label for="pub"> Publication</label>
                 <textarea name="article_pub" id="pub" cols="15" rows="4" class="form-control"></textarea>
             </div>
-
             <button type="submit" name="publier" class="btn btn-primary"> Publier</button>
         </form>
-
+        <br>
     </div>
     <div class="row">
-        <?php $req=$bdd->query('SELECT *FROM  article ORDER BY name_img ');
-
-        ?>
-
+<!--        Selection des article-->
+        <?php $req=$bdd->query('SELECT *FROM  article ORDER BY name_img DESC '); ?>
         <?php while ($pubs=$req->fetch()):  ?>
             <div class=" pub col-sm-6 col-md-3">
                 <div class="thumbnail">
                     <img src="file_img_pub/<?= $pubs->name_img ;  ?>" alt="...">
                     <div class="caption">
-                        <h3><?= $pubs->title_pub  ?></h3>
-                        <p>C'est une publication de <?= $pubs->title_pub  ?> </p>
-                        <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
+                        <h4 style="text-transform: uppercase"><?= $pubs->title_pub;  ?></h4>
+                        <h5>C'est une publication de <span class="auteur_pub"><?= $pubs->auteur_pub ; ?> </span> </h5>
+                        <p><a href='article.php?id_pub=<?= $pubs->id_pub; ?>' class="btn btn-primary" role="button">Lire la publication</a></p>
+                        <p>
+                            <i class="far fa-clock"></i>
+                            <?php setlocale (LC_ALL, 'fr_FR');
+//                           %T represente heure minuite et seconde
+//                           ucfirst permet de mettre la permière lettre des date en majuscule
+//                            strtotime() convertir la date en timestamp
+                            echo  ucfirst(strftime( "%A %d %B %Y à %T  ", strtotime($pubs->dat_pub) ))  ;
+                            ?>
+                        </p>
                     </div>
                 </div>
             </div>
         <?php endwhile;  ?>
+        <?php
+    //      Stockage des information des pubs dans la session
+            $pubs=$req->fetch();
+            $_SESSION['pubs']=$pubs;
+        ?>
     </div>
-
-
 </div>
 
 

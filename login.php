@@ -7,7 +7,9 @@
         $req->execute(array($_POST['pseudo']));
         $users=$req->fetch();
         session_start();
-        if (password_verify($_POST['pass'], $users->pass_word)){
+        if(empty($users)){
+            $_SESSION['flash']['danger']='Aucun  compte ne corespond à ces informations; Veuillez vous inscrire';
+        }elseif (password_verify($_POST['pass'], $users->pass_word)){
 //         Si le pseduo et le mot de passe exitent et corresponde, on les stock dans session auth puis dirige l'utilisateur vers son profil'
             $_SESSION['auth']=$users;
             $_SESSION['flash']['success']="Connection réussir";

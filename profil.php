@@ -138,11 +138,6 @@ require 'inc/database.php';
                 </div>
             </div>
         <?php endwhile;  ?>
-        <?php
-    //      Stockage des information des pubs dans la session
-            $pubs=$req->fetch();
-            $_SESSION['pubs']=$pubs;
-        ?>
     </div>
 </div>
 

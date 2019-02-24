@@ -25,3 +25,22 @@ body{
     font-weight: 700;
     color: #55938d;
 }
+.form-control{
+    border: none;
+    border-bottom: solid 1px #1b6d85;
+    border-radius: 0;
+    outline: 0;
+    box-shadow: none;
+}
+.form-control:focus{
+    border: none;
+    outline: 0;
+    border-bottom: 1px solid #1b6d85;
+    box-shadow: none;
+}
+.inputComment, .inputComment:focus{
+    border: 2px solid #2e6da4;
+    border-radius: 50px ;
+    overflow: hidden;
+    resize: none;
+}

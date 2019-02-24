@@ -21,3 +21,7 @@
             exit();
         }
     }
+    function input_text_ok($text){
+        htmlentities(htmlspecialchars(trim($text)));
+        return $text;
+    }

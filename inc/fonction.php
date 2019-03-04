@@ -21,7 +21,18 @@
             exit();
         }
     }
+
+
     function input_text_ok($text){
         htmlentities(htmlspecialchars(trim($text)));
         return $text;
+    }
+
+    function length_test ( $min_lenght, $max_lenght,  $test){
+        $inputLenght= strlen($test);
+        if ($inputLenght > $max_lenght || $inputLenght<$min_lenght) {
+            return true;
+        }else{
+            return false;
+        }
     }

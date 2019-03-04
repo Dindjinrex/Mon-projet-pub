@@ -9,19 +9,30 @@ require 'inc/database.php';
         $errors=[];
         $auteur_pseudo = $_SESSION['auth']->pseudo;
 
+
     if(!empty($_POST)) {
-        // si on clic sur publier publier
-        if (empty($_POST['title_pub'])) {
+
+        $title_pub=input_text_ok($_POST['title_pub']);
+
+        $article_pub=input_text_ok($_POST['article_pub']);
+
+        if (empty($title_pub)){
             $errors['noTitle'] = "Veuillez donner un titre à votre publication";
         }
-//        Si la publication est vide
-        if (empty($_POST['article_pub'])) {
+
+
+        if (length_test(4, 15, $title_pub)){
+            $errors['longTitle']="Titre invalide: minimin 4 caractère et maximun 15 caractère";
+        }
+
+
+        if (empty($article_pub)) {
             $errors['noArticle'] = "Veuillez envoyer votre publication";
         }
-//        Sans Envoyer une image
+
         $file_name = $_FILES['img_pub']['name'];
 
-//     On recupere  avec "strrchr" la dernier partie de la chaine du nom du fichier comment par le '.'
+//     On recupere  avec "strrchr" la dernier partie de la chaine du nom du fichier commencant par le '.'
 //     Nous allons convertir avec "strtolower()" l'extension en miniscule
 
         $file_extension = strtolower(strrchr($file_name, ". "));
@@ -49,8 +60,6 @@ require 'inc/database.php';
             }
 
 //          la destination du fichier, le nom du fcihier sera de la forme timstamp_frejus.jpg
-
-//            Destination du fichier
             $file_dest = 'file_img_pub/' . $name_img;
             if (empty($errors)) {
                 $upload = move_uploaded_file($_FILES['img_pub']['tmp_name'], $file_dest);
@@ -61,7 +70,7 @@ require 'inc/database.php';
 //        S'il $errors est vide alors o=insert dans la base de donnéé
         if (empty($errors)) {
             $req = $bdd->prepare('INSERT INTO article(auteur_pub, title_pub, publication, name_img, dat_pub) VALUES(?, ?, ?, ?, NOW())');
-            $req->execute(array($_SESSION['auth']->pseudo, $_POST['title_pub'], $_POST['article_pub'], $name_img));
+            $req->execute(array($_SESSION['auth']->pseudo, $title_pub, $article_pub, $name_img));
         }else{
             $errors['fail_upload']="Echec: Mr $auteur_pseudo votre publication n'a pu etre chargé ";
         }
@@ -116,31 +125,48 @@ require 'inc/database.php';
     </div>
     <div class="row">
 <!--        Selection des article-->
-        <?php $req=$bdd->query('SELECT *FROM  article ORDER BY name_img DESC '); ?>
-        <?php while ($pubs=$req->fetch()):  ?>
-            <div class=" pub col-sm-6 col-md-3">
-                <div class="thumbnail">
-                    <img src="file_img_pub/<?= $pubs->name_img ;  ?>" alt="...">
-                    <div class="caption">
-                        <h4 style="text-transform: uppercase"><?= $pubs->title_pub;  ?></h4>
-                        <h5>C'est une publication de <span class="auteur_pub"><?= $pubs->auteur_pub ; ?> </span> </h5>
-                        <p><a href='article.php?id_pub=<?= $pubs->id_pub; ?>' class="btn btn-primary" role="button">Lire la publication</a></p>
-                        <p>
-                            <i class="far fa-clock"></i>
-                            <?php setlocale (LC_ALL, 'fr_FR');
-//                           %T represente heure minuite et seconde
-//                           ucfirst permet de mettre la permière lettre des date en majuscule
-//                            strtotime() convertir la date en timestamp
-                            echo  ucfirst(strftime( "%A %d %B %Y à %T  ", strtotime($pubs->dat_pub) ))  ;
-                            ?>
-                        </p>
+        <?php
+
+        $req=$bdd->query('SELECT *FROM  article ORDER BY name_img DESC  ');
+        $nbrParPage= 12;
+        $nbrArticle= $req->rowCount();
+        $nbrDePage=ceil($nbrArticle/$nbrDePage);
+        ?>
+        <div class=" pub container-fluid">
+            <div class="row">
+                <?php while ($pubs=$req->fetch()):  ?>
+                    <div class=" col-md-3">
+                        <div class="img-content">
+                            <img src="file_img_pub/<?= $pubs->name_img ;  ?>"  class="thumbnail" alt="...">
+                        </div>
+                        <div class="caption">
+                            <h4 style="text-transform: uppercase"><?= $pubs->title_pub;  ?></h4>
+                            <h5>C'est une publication de <span class="auteur_pub"><?= $pubs->auteur_pub ; ?> </span> </h5>
+                            <p>
+                                <a href='article.php?id_pub=<?= $pubs->id_pub; ?>' class="btn btn-primary" role="button">Lire la publication</a>
+                                <a href="" class="btn btn-danger">Supprimer </a>
+                            </p>
+                            <p>
+                                <i class="far fa-clock"></i>
+                                <?php setlocale (LC_ALL, 'fr_FR');
+                                //                           %T represente heure minuite et seconde
+                                //                           ucfirst permet de mettre la permière lettre des date en majuscule
+                                //                            strtotime() convertir la date en timestamp
+                                echo  ucfirst(strftime( "%A %d %B %Y à %T  ", strtotime($pubs->dat_pub) ))  ;
+                                ?>
+                            </p>
+                        </div>
                     </div>
-                </div>
+                <?php endwhile;  ?>
             </div>
-        <?php endwhile;  ?>
+        </div>
     </div>
 </div>
 
-
+<?php
+for ($i=1; $i<=$nbrDePage; $i++){
+    echo $i.'/';
+}
+?>
 
 <?php require 'inc/footer.php '; ?>
